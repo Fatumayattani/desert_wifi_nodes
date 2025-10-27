@@ -2,6 +2,8 @@
 
 A decentralized, community-owned WiFi network platform powered by solar energy and Scroll blockchain payments. This project aims to bridge the digital gap by providing affordable, reliable internet access to underserved communities.
 
+![Desert WiFi Nodes](public/desertw.png)
+
 ## Overview
 
 Desert WiFi Nodes is a web application that enables communities to establish and manage their own solar-powered WiFi mesh networks. Users can connect to local nodes, make affordable payments via cryptocurrency on the Scroll network, and track their usage through an intuitive dashboard.
