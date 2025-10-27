@@ -130,7 +130,7 @@ App (Root)
 │   Scroll Network (L2)            │
 │                                  │
 │  ┌────────────────────────────┐ │
-│  │  Smart Contract (Future)   │ │
+│  │  Smart Contract            │ │
 │  │  - Payment Processing      │ │
 │  │  - Node Registration       │ │
 │  │  - Usage Tracking          │ │
