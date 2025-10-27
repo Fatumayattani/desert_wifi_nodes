@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useWeb3 } from './contexts/Web3Context';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import HowItWorks from './components/HowItWorks';
@@ -8,40 +9,19 @@ import Footer from './components/Footer';
 
 function App() {
   const [showDashboard, setShowDashboard] = useState(false);
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const { isConnected, connectWallet, disconnectWallet } = useWeb3();
 
   const handleConnectWallet = async () => {
-    const ethereum = (window as any).ethereum;
-
-    if (!ethereum) {
-      alert('Please install MetaMask to connect to Desert WiFi Nodes');
-      return;
-    }
-
-    let provider = ethereum;
-
-    if (ethereum.providers?.length) {
-      provider = ethereum.providers.find((p: any) => p.isMetaMask);
-      if (!provider) {
-        alert('MetaMask is not installed. Please install MetaMask to connect to Desert WiFi Nodes');
-        return;
-      }
-    } else if (!ethereum.isMetaMask) {
-      alert('MetaMask is not detected. Please install MetaMask or ensure it is enabled in your browser');
-      return;
-    }
-
     try {
-      await provider.request({ method: 'eth_requestAccounts' });
-      setIsWalletConnected(true);
+      await connectWallet();
       setShowDashboard(true);
     } catch (error) {
-      console.error('User rejected connection');
+      console.error('Failed to connect wallet:', error);
     }
   };
 
   const handleDisconnect = () => {
-    setIsWalletConnected(false);
+    disconnectWallet();
     setShowDashboard(false);
   };
 
@@ -50,7 +30,7 @@ function App() {
       {!showDashboard && (
         <Navbar
           onConnect={handleConnectWallet}
-          isConnected={isWalletConnected}
+          isConnected={isConnected}
         />
       )}
       {!showDashboard ? (
@@ -63,7 +43,7 @@ function App() {
       ) : (
         <Dashboard
           onDisconnect={handleDisconnect}
-          isConnected={isWalletConnected}
+          isConnected={isConnected}
         />
       )}
     </div>

@@ -1,5 +1,9 @@
+import { useState, useEffect } from 'react';
 import { Users, Wifi, DollarSign, ArrowLeft, Activity, TrendingUp } from 'lucide-react';
+import { formatEther } from 'ethers';
+import { useWeb3 } from '../contexts/Web3Context';
 import Footer from './Footer';
+import PaymentModal from './PaymentModal';
 
 interface DashboardProps {
   onDisconnect: () => void;
@@ -7,43 +11,89 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ onDisconnect, isConnected }: DashboardProps) {
-  const mockPaymentHistory = [
-    { id: 1, date: '2025-10-25', amount: '0.0015 ETH', status: 'Completed', node: 'Node-AZ-001' },
-    { id: 2, date: '2025-10-20', amount: '0.0012 ETH', status: 'Completed', node: 'Node-AZ-003' },
-    { id: 3, date: '2025-10-15', amount: '0.0018 ETH', status: 'Completed', node: 'Node-AZ-001' },
-    { id: 4, date: '2025-10-10', amount: '0.0015 ETH', status: 'Completed', node: 'Node-AZ-002' },
-    { id: 5, date: '2025-10-05', amount: '0.0020 ETH', status: 'Completed', node: 'Node-AZ-001' },
-  ];
+  const { getUserPayments, getNetworkStats } = useWeb3();
+  const [paymentHistory, setPaymentHistory] = useState<any[]>([]);
+  const [networkStats, setNetworkStats] = useState({
+    activeNodes: '0',
+    totalUsers: '0',
+    totalVolume: '0.0 ETH',
+    uptime: '100%',
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const [payments, stats] = await Promise.all([
+        getUserPayments(),
+        getNetworkStats(),
+      ]);
+
+      const formattedPayments = payments.map((payment, index) => ({
+        id: index + 1,
+        date: new Date(Number(payment.timestamp) * 1000).toLocaleDateString(),
+        amount: `${formatEther(payment.amount)} ETH`,
+        status: 'Completed',
+        node: `Node-${payment.nodeId}`,
+      }));
+
+      setPaymentHistory(formattedPayments.reverse().slice(0, 10));
+
+      if (stats) {
+        setNetworkStats({
+          activeNodes: stats.activeNodes.toString(),
+          totalUsers: stats.totalUsers.toString(),
+          totalVolume: `${formatEther(stats.totalVolume)} ETH`,
+          uptime: '99.8%',
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isConnected) {
+      fetchData();
+    }
+  }, [isConnected]);
+
+  const handlePaymentSuccess = () => {
+    fetchData();
+  };
 
   const stats = [
     {
       icon: Wifi,
       label: 'Active Nodes',
-      value: '547',
-      change: '+23 this week',
+      value: isLoading ? '...' : networkStats.activeNodes,
+      change: 'Network-wide',
       color: 'text-teal-600',
       bgColor: 'bg-teal-50',
     },
     {
       icon: Users,
       label: 'Connected Users',
-      value: '12,438',
-      change: '+1,204 this week',
+      value: isLoading ? '...' : networkStats.totalUsers,
+      change: 'Network-wide',
       color: 'text-coral-600',
       bgColor: 'bg-coral-50',
     },
     {
       icon: DollarSign,
       label: 'Total Volume',
-      value: '18.4 ETH',
-      change: '+2.3 ETH this week',
+      value: isLoading ? '...' : networkStats.totalVolume,
+      change: 'Network-wide',
       color: 'text-sunny-600',
       bgColor: 'bg-sunny-50',
     },
     {
       icon: Activity,
       label: 'Network Uptime',
-      value: '99.8%',
+      value: networkStats.uptime,
       change: 'Last 30 days',
       color: 'text-teal-600',
       bgColor: 'bg-teal-50',
@@ -132,24 +182,38 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {mockPaymentHistory.map((payment) => (
-                  <tr key={payment.id} className="hover:bg-teal-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                      {payment.date}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-bold">
-                      {payment.node}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
-                      {payment.amount}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-teal-100 text-teal-700 border-2 border-teal-200">
-                        {payment.status}
-                      </span>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                      Loading payment history...
                     </td>
                   </tr>
-                ))}
+                ) : paymentHistory.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                      No payment history yet. Make your first payment to get started!
+                    </td>
+                  </tr>
+                ) : (
+                  paymentHistory.map((payment) => (
+                    <tr key={payment.id} className="hover:bg-teal-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                        {payment.date}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-bold">
+                        {payment.node}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+                        {payment.amount}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-teal-100 text-teal-700 border-2 border-teal-200">
+                          {payment.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -168,7 +232,10 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
               <h3 className="text-3xl font-extrabold mb-3">Need More Data?</h3>
               <p className="text-white/90 text-lg">Top up your account to continue enjoying affordable WiFi access</p>
             </div>
-            <button className="bg-white text-teal-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:scale-105 whitespace-nowrap">
+            <button
+              onClick={() => setIsPaymentModalOpen(true)}
+              className="bg-white text-teal-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:scale-105 whitespace-nowrap"
+            >
               Add Funds
             </button>
           </div>
@@ -176,6 +243,12 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
       </div>
 
       <Footer />
+
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
     </div>
   );
 }
