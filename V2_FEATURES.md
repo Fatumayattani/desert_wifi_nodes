@@ -1,8 +1,8 @@
-# Desert WiFi Nodes V2 - Enhanced Features
+# Deslink V2 - Enhanced Features
 
 ## Overview
 
-Version 2 of the Desert WiFi Nodes smart contract adds powerful features for a more robust, community-driven WiFi network platform.
+Version 2 of the Deslink smart contract adds powerful features for a more robust, community-driven WiFi network platform.
 
 ## Key Enhancements
 
@@ -97,7 +97,7 @@ Users can rate nodes after using them:
 ### Smart Contract Architecture
 
 ```
-DesertWifiNodesV2
+DeslinkV2
 ├── ERC20 Token Integration (USDC/USDT)
 ├── Payment Splitting Logic
 ├── Reputation Tracking System

@@ -5,7 +5,7 @@ export default function HowItWorks() {
     {
       icon: Wifi,
       title: 'Connect to a Node',
-      description: 'Find and connect to a nearby Desert WiFi Node in your community',
+      description: 'Find and connect to a nearby Deslink node in your community',
       color: 'text-teal-600',
       bgColor: 'bg-teal-100',
       illustration: (

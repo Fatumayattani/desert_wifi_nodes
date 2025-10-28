@@ -16,7 +16,7 @@ export default function Navbar({ onConnect, isConnected }: NavbarProps) {
               <Wifi className="w-4 h-4 text-white absolute -bottom-1 -right-1 bg-coral-500 rounded-full p-0.5" />
             </div>
             <div>
-              <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">Desert WiFi Nodes</h1>
+              <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">Deslink</h1>
               <p className="text-xs font-semibold text-teal-600">Powered by Solar & Community</p>
             </div>
           </div>

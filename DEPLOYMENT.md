@@ -1,6 +1,6 @@
 # Smart Contract Deployment Guide
 
-This guide explains how to deploy the Desert WiFi Nodes smart contracts to the Scroll network and configure the frontend application.
+This guide explains how to deploy the Deslink smart contracts to the Scroll network and configure the frontend application.
 
 ## Contract Versions
 
@@ -138,7 +138,7 @@ The `DesertWifiNodesV2.sol` smart contract includes everything from V1 plus:
      await contract.waitForDeployment();
 
      const address = await contract.getAddress();
-     console.log("DesertWifiNodes deployed to:", address);
+     console.log("Deslink contract deployed to:", address);
    }
 
    main().catch((error) => {

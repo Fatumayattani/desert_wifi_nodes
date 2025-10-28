@@ -24,7 +24,7 @@ export default function Hero() {
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight leading-tight">
-              Desert WiFi<br />Nodes
+              Deslink
             </h1>
 
             <p className="text-lg text-teal-100 mb-8 max-w-xl">

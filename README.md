@@ -1,12 +1,12 @@
-# Desert WiFi Nodes
+# Deslink
 
 A decentralized, community-owned WiFi network platform powered by solar energy and Scroll blockchain payments. This project aims to bridge the digital gap by providing affordable, reliable internet access to underserved communities.
 
-![Desert WiFi Nodes](public/desertw.png)
+![Deslink](public/desertw.png)
 
 ## Overview
 
-Desert WiFi Nodes is a web application that enables communities to establish and manage their own solar-powered WiFi mesh networks. Users can connect to local nodes, make affordable payments via cryptocurrency on the Scroll network, and track their usage through an intuitive dashboard.
+Deslink is a web application that enables communities to establish and manage their own solar-powered WiFi mesh networks. Users can connect to local nodes, make affordable payments via cryptocurrency on the Scroll network, and track their usage through an intuitive dashboard.
 
 ## Features
 
@@ -37,7 +37,7 @@ Desert WiFi Nodes is a web application that enables communities to establish and
 ### Application Structure
 
 ```
-desert-wifi-nodes/
+deslink/
 ├── contracts/
 │   └── DesertWifiNodes.sol      # Main smart contract
 ├── src/
@@ -221,7 +221,7 @@ App (Root)
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd desert-wifi-nodes
+cd deslink
 ```
 
 2. Install dependencies:
@@ -272,7 +272,7 @@ npm run preview
 ## Features in Detail
 
 ### 1. Smart Contract
-The DesertWifiNodes smart contract provides:
+The Deslink smart contract provides:
 - **Node Registration**: On-chain registration of WiFi nodes with location and pricing
 - **Payment Processing**: Secure payment handling with automatic fund distribution
 - **Earnings Management**: Node operators can withdraw earnings anytime
