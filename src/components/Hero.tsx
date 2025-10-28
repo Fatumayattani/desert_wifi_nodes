@@ -1,4 +1,9 @@
-export default function Hero() {
+interface HeroProps {
+  onConnect: () => void;
+  isConnected: boolean;
+}
+
+export default function Hero({ onConnect, isConnected }: HeroProps) {
   return (
     <section className="relative overflow-hidden min-h-screen flex items-center bg-gradient-to-br from-teal-400 via-teal-500 to-teal-600">
       <div className="absolute inset-0 opacity-10">
@@ -32,8 +37,11 @@ export default function Hero() {
             </p>
 
             <div className="flex flex-wrap gap-4">
-              <button className="bg-white text-teal-600 px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
-                Get Connected
+              <button
+                onClick={onConnect}
+                className="bg-white text-teal-600 px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+              >
+                {isConnected ? 'View Dashboard' : 'Connect Now'}
               </button>
               <button className="bg-coral-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
                 Learn More

@@ -4,6 +4,7 @@ import { formatEther } from 'ethers';
 import { useWeb3 } from '../contexts/Web3Context';
 import Footer from './Footer';
 import PaymentModal from './PaymentModal';
+import WalletAddressDisplay from './WalletAddressDisplay';
 
 interface DashboardProps {
   onDisconnect: () => void;
@@ -11,7 +12,7 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ onDisconnect, isConnected }: DashboardProps) {
-  const { getUserPayments, getNetworkStats } = useWeb3();
+  const { getUserPayments, getNetworkStats, account } = useWeb3();
   const [paymentHistory, setPaymentHistory] = useState<any[]>([]);
   const [networkStats, setNetworkStats] = useState({
     activeNodes: '0',
@@ -114,16 +115,12 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
             </button>
 
             <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-2 bg-teal-100 text-teal-700 px-4 py-2 rounded-full text-sm font-bold border-2 border-teal-200">
-                <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse" />
-                Connected
-              </div>
-              <button
-                onClick={onDisconnect}
-                className="bg-coral-100 hover:bg-coral-200 text-coral-700 px-5 py-2 rounded-full text-sm font-bold transition-all hover:scale-105 border-2 border-coral-200"
-              >
-                Disconnect
-              </button>
+              {account && (
+                <WalletAddressDisplay
+                  address={account}
+                  onDisconnect={onDisconnect}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWeb3 } from './contexts/Web3Context';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -6,23 +6,40 @@ import HowItWorks from './components/HowItWorks';
 import CommunityOwnership from './components/CommunityOwnership';
 import Dashboard from './components/Dashboard';
 import Footer from './components/Footer';
+import ConnectionConfirmation from './components/ConnectionConfirmation';
 
 function App() {
   const [showDashboard, setShowDashboard] = useState(false);
-  const { isConnected, connectWallet, disconnectWallet } = useWeb3();
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const { isConnected, connectWallet, disconnectWallet, account } = useWeb3();
+
+  useEffect(() => {
+    if (isConnected && account && !showDashboard) {
+      setShowConfirmation(true);
+    }
+  }, [isConnected, account, showDashboard]);
 
   const handleConnectWallet = async () => {
-    try {
-      await connectWallet();
+    if (isConnected && account) {
       setShowDashboard(true);
-    } catch (error) {
-      console.error('Failed to connect wallet:', error);
+    } else {
+      try {
+        await connectWallet();
+      } catch (error) {
+        console.error('Failed to connect wallet:', error);
+      }
     }
+  };
+
+  const handleContinueToDashboard = () => {
+    setShowConfirmation(false);
+    setShowDashboard(true);
   };
 
   const handleDisconnect = () => {
     disconnectWallet();
     setShowDashboard(false);
+    setShowConfirmation(false);
   };
 
   return (
@@ -35,7 +52,10 @@ function App() {
       )}
       {!showDashboard ? (
         <>
-          <Hero />
+          <Hero
+            onConnect={handleConnectWallet}
+            isConnected={isConnected}
+          />
           <HowItWorks />
           <CommunityOwnership />
           <Footer />
@@ -44,6 +64,14 @@ function App() {
         <Dashboard
           onDisconnect={handleDisconnect}
           isConnected={isConnected}
+        />
+      )}
+
+      {showConfirmation && account && (
+        <ConnectionConfirmation
+          isOpen={showConfirmation}
+          walletAddress={account}
+          onContinue={handleContinueToDashboard}
         />
       )}
     </div>
