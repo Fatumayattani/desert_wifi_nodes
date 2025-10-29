@@ -183,6 +183,11 @@ npm install
 4. Configure environment variables:
 ```bash
 # Create .env file
+VITE_CONTRACT_ADDRESS=0xxxxxx
+VITE_NETWORK_CHAIN_ID=534351
+VITE_NETWORK_NAME=Scroll Sepolia
+VITE_USDC_ADDRESS=0xxxxxxx
+VITE_USDT_ADDRESS=0xxxx
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
