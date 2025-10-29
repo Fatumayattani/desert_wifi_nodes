@@ -1,19 +1,28 @@
-import { useState } from 'react';
-import { X, Clock, DollarSign } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Clock, DollarSign, MapPin, ArrowLeft } from 'lucide-react';
 import { useWeb3 } from '../contexts/Web3Context';
+import { WifiNode } from '../lib/supabase';
 
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
   onPaymentSuccess: () => void;
+  selectedNode?: WifiNode | null;
 }
 
-export default function PaymentModal({ isOpen, onClose, onPaymentSuccess }: PaymentModalProps) {
+export default function PaymentModal({ isOpen, onClose, onPaymentSuccess, selectedNode }: PaymentModalProps) {
   const { makePayment, isLoading } = useWeb3();
   const [nodeId, setNodeId] = useState('1');
   const [duration, setDuration] = useState('3600');
   const [amount, setAmount] = useState('0.001');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (selectedNode) {
+      setNodeId(selectedNode.node_id.toString());
+      setAmount(selectedNode.price_per_hour_eth.toString());
+    }
+  }, [selectedNode]);
 
   if (!isOpen) return null;
 
@@ -53,11 +62,52 @@ export default function PaymentModal({ isOpen, onClose, onPaymentSuccess }: Paym
               <X className="w-6 h-6" />
             </button>
           </div>
-          <p className="text-white/90 mt-2">Connect to a node and add funds to your account</p>
+          <p className="text-white/90 mt-2">
+            {selectedNode ? `Selected: ${selectedNode.location}` : 'Connect to a node and add funds to your account'}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          <div>
+          {selectedNode && (
+            <div className="bg-teal-50 border-2 border-teal-200 rounded-xl p-4">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <MapPin className="w-4 h-4 text-teal-600" />
+                    <span className="font-bold text-gray-900">{selectedNode.location}</span>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Node ID:</span>
+                      <span className="font-bold text-gray-900">#{selectedNode.node_id}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Price (ETH):</span>
+                      <span className="font-bold text-gray-900">{selectedNode.price_per_hour_eth} ETH/hr</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Price (USD):</span>
+                      <span className="font-bold text-gray-900">${selectedNode.price_per_hour_usd}/hr</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Reputation:</span>
+                      <span className="font-bold text-teal-600">{selectedNode.reputation_score}/100</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!selectedNode && (
+            <div className="bg-sunny-50 border-2 border-sunny-200 rounded-xl p-4">
+              <p className="text-sm text-sunny-800 font-medium">
+                ⚠️ No node selected. Please browse and select a node first.
+              </p>
+            </div>
+          )}
+
+          <div style={{ display: selectedNode ? 'none' : 'block' }}>
             <label className="block text-sm font-bold text-gray-700 mb-2">
               Node ID
             </label>

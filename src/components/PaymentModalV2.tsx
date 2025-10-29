@@ -1,15 +1,17 @@
-import { useState } from 'react';
-import { X, Clock, DollarSign, Coins } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Clock, DollarSign, Coins, MapPin } from 'lucide-react';
 import { useWeb3V2 } from '../contexts/Web3ContextV2';
 import { PaymentType, USDC_ADDRESS, USDT_ADDRESS } from '../contracts/desertWifiNodesV2Config';
+import { WifiNode } from '../lib/supabase';
 
 interface PaymentModalV2Props {
   isOpen: boolean;
   onClose: () => void;
   onPaymentSuccess: () => void;
+  selectedNode?: WifiNode | null;
 }
 
-export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess }: PaymentModalV2Props) {
+export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, selectedNode }: PaymentModalV2Props) {
   const { makePaymentETH, makePaymentStablecoin, approveStablecoin, isLoading } = useWeb3V2();
   const [nodeId, setNodeId] = useState('1');
   const [duration, setDuration] = useState('3600');
@@ -17,6 +19,17 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess }: Pa
   const [paymentMethod, setPaymentMethod] = useState<'ETH' | 'USDC' | 'USDT'>('ETH');
   const [error, setError] = useState('');
   const [step, setStep] = useState<'payment' | 'approve'>('payment');
+
+  useEffect(() => {
+    if (selectedNode) {
+      setNodeId(selectedNode.node_id.toString());
+      if (paymentMethod === 'ETH') {
+        setAmount(selectedNode.price_per_hour_eth.toString());
+      } else {
+        setAmount(selectedNode.price_per_hour_usd.toString());
+      }
+    }
+  }, [selectedNode, paymentMethod]);
 
   if (!isOpen) return null;
 
@@ -102,11 +115,53 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess }: Pa
             </button>
           </div>
           <p className="text-white/90 mt-2">
-            {step === 'approve' ? 'Approve token spending' : 'Connect to a node and add funds'}
+            {step === 'approve'
+              ? 'Approve token spending'
+              : selectedNode
+              ? `Selected: ${selectedNode.location}`
+              : 'Connect to a node and add funds'}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {selectedNode && (
+            <div className="bg-teal-50 border-2 border-teal-200 rounded-xl p-4">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <MapPin className="w-4 h-4 text-teal-600" />
+                    <span className="font-bold text-gray-900">{selectedNode.location}</span>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Node ID:</span>
+                      <span className="font-bold text-gray-900">#{selectedNode.node_id}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Price (ETH):</span>
+                      <span className="font-bold text-gray-900">{selectedNode.price_per_hour_eth} ETH/hr</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Price (USD):</span>
+                      <span className="font-bold text-gray-900">${selectedNode.price_per_hour_usd}/hr</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Reputation:</span>
+                      <span className="font-bold text-teal-600">{selectedNode.reputation_score}/100</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!selectedNode && (
+            <div className="bg-sunny-50 border-2 border-sunny-200 rounded-xl p-4">
+              <p className="text-sm text-sunny-800 font-medium">
+                ⚠️ No node selected. Please browse and select a node first.
+              </p>
+            </div>
+          )}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">
               <Coins className="w-4 h-4 inline mr-1" />
@@ -149,7 +204,7 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess }: Pa
             </div>
           </div>
 
-          <div>
+          <div style={{ display: selectedNode ? 'none' : 'block' }}>
             <label className="block text-sm font-bold text-gray-700 mb-2">
               Node ID
             </label>

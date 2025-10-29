@@ -5,6 +5,8 @@ import { useWeb3 } from '../contexts/Web3Context';
 import Footer from './Footer';
 import PaymentModal from './PaymentModal';
 import WalletAddressDisplay from './WalletAddressDisplay';
+import NodeBrowser from './NodeBrowser';
+import { WifiNode } from '../lib/supabase';
 
 interface DashboardProps {
   onDisconnect: () => void;
@@ -22,6 +24,8 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isNodeBrowserOpen, setIsNodeBrowserOpen] = useState(false);
+  const [selectedNode, setSelectedNode] = useState<WifiNode | null>(null);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -64,6 +68,22 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
 
   const handlePaymentSuccess = () => {
     fetchData();
+    setSelectedNode(null);
+  };
+
+  const handleSelectNode = (node: WifiNode) => {
+    setSelectedNode(node);
+    setIsNodeBrowserOpen(false);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleOpenNodeBrowser = () => {
+    setIsNodeBrowserOpen(true);
+  };
+
+  const handleClosePaymentModal = () => {
+    setIsPaymentModalOpen(false);
+    setSelectedNode(null);
   };
 
   const stats = [
@@ -230,7 +250,7 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
               <p className="text-white/90 text-lg">Top up your account to continue enjoying affordable WiFi access</p>
             </div>
             <button
-              onClick={() => setIsPaymentModalOpen(true)}
+              onClick={handleOpenNodeBrowser}
               className="bg-white text-teal-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:scale-105 whitespace-nowrap"
             >
               Add Funds
@@ -241,10 +261,17 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
 
       <Footer />
 
+      <NodeBrowser
+        isOpen={isNodeBrowserOpen}
+        onClose={() => setIsNodeBrowserOpen(false)}
+        onSelectNode={handleSelectNode}
+      />
+
       <PaymentModal
         isOpen={isPaymentModalOpen}
-        onClose={() => setIsPaymentModalOpen(false)}
+        onClose={handleClosePaymentModal}
         onPaymentSuccess={handlePaymentSuccess}
+        selectedNode={selectedNode}
       />
     </div>
   );
