@@ -11,17 +11,25 @@ import ConnectionConfirmation from './components/ConnectionConfirmation';
 function App() {
   const [showDashboard, setShowDashboard] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const { isConnected, connectWallet, disconnectWallet, account } = useWeb3V2();
+  const { isConnected, connectWallet, disconnectWallet, account, isLoading } = useWeb3V2();
 
   useEffect(() => {
-    if (isConnected && account && !showDashboard) {
+    if (isConnected && account && !showDashboard && !isLoading) {
       setShowConfirmation(true);
+
+      const autoNavigateTimer = setTimeout(() => {
+        setShowConfirmation(false);
+        setShowDashboard(true);
+      }, 2500);
+
+      return () => clearTimeout(autoNavigateTimer);
     }
-  }, [isConnected, account, showDashboard]);
+  }, [isConnected, account, showDashboard, isLoading]);
 
   const handleConnectWallet = async () => {
     if (isConnected && account) {
       setShowDashboard(true);
+      setShowConfirmation(false);
     } else {
       try {
         await connectWallet();
@@ -48,6 +56,7 @@ function App() {
         <Navbar
           onConnect={handleConnectWallet}
           isConnected={isConnected}
+          walletAddress={account}
         />
       )}
       {!showDashboard ? (

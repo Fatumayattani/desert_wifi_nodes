@@ -1,4 +1,5 @@
-import { CheckCircle, Wallet } from 'lucide-react';
+import { CheckCircle, Wallet, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface ConnectionConfirmationProps {
   isOpen: boolean;
@@ -11,6 +12,24 @@ export default function ConnectionConfirmation({
   walletAddress,
   onContinue,
 }: ConnectionConfirmationProps) {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 4;
+      });
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const formatAddress = (addr: string) => {
@@ -26,7 +45,7 @@ export default function ConnectionConfirmation({
               <Wallet className="w-12 h-12 text-teal-600" />
             </div>
             <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1">
-              <CheckCircle className="w-8 h-8 text-teal-500" />
+              <CheckCircle className="w-8 h-8 text-teal-500 animate-pulse" />
             </div>
           </div>
 
@@ -43,8 +62,21 @@ export default function ConnectionConfirmation({
             <div className="font-mono text-lg font-bold text-gray-900 break-all">
               {formatAddress(walletAddress)}
             </div>
-            <div className="text-xs text-gray-500 mt-2 font-medium">
+            <div className="text-xs text-gray-500 mt-2 font-medium break-all">
               {walletAddress}
+            </div>
+          </div>
+
+          <div className="w-full mb-4">
+            <div className="flex items-center justify-center gap-2 text-sm text-gray-600 mb-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Redirecting to dashboard...</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-gradient-to-r from-teal-500 to-coral-500 h-full transition-all duration-100 ease-out"
+                style={{ width: `${progress}%` }}
+              />
             </div>
           </div>
 
@@ -52,7 +84,7 @@ export default function ConnectionConfirmation({
             onClick={onContinue}
             className="w-full bg-gradient-to-r from-teal-500 to-coral-500 text-white px-8 py-4 rounded-full font-bold text-lg hover:from-teal-600 hover:to-coral-600 transition-all shadow-xl hover:shadow-2xl hover:scale-105"
           >
-            Go to Dashboard
+            Go Now
           </button>
         </div>
       </div>
