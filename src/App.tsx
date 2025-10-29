@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useWeb3 } from './contexts/Web3Context';
+import { useWeb3V2 } from './contexts/Web3ContextV2';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import HowItWorks from './components/HowItWorks';
@@ -11,7 +11,7 @@ import ConnectionConfirmation from './components/ConnectionConfirmation';
 function App() {
   const [showDashboard, setShowDashboard] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const { isConnected, connectWallet, disconnectWallet, account } = useWeb3();
+  const { isConnected, connectWallet, disconnectWallet, account } = useWeb3V2();
 
   useEffect(() => {
     if (isConnected && account && !showDashboard) {
