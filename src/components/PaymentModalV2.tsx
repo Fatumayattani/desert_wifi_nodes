@@ -3,6 +3,7 @@ import { X, Clock, DollarSign, Coins, MapPin } from 'lucide-react';
 import { useWeb3V2 } from '../contexts/Web3ContextV2';
 import { PaymentType, USDC_ADDRESS, USDT_ADDRESS } from '../contracts/desertWifiNodesV2Config';
 import { WifiNode } from '../lib/supabase';
+import WifiConnectedModal from './WifiConnectedModal';
 
 interface PaymentModalV2Props {
   isOpen: boolean;
@@ -19,6 +20,7 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, sele
   const [paymentMethod, setPaymentMethod] = useState<'ETH' | 'USDC' | 'USDT'>('ETH');
   const [error, setError] = useState('');
   const [step, setStep] = useState<'payment' | 'approve'>('payment');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     if (selectedNode) {
@@ -67,6 +69,7 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, sele
 
       onPaymentSuccess();
       onClose();
+      setShowSuccessModal(true);
       setNodeId('1');
       setDuration('3600');
       setAmount('0.001');
@@ -101,8 +104,13 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, sele
     { label: '24 Hours', value: '86400' },
   ];
 
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <>
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full border-4 border-gray-100 relative overflow-hidden">
         <div className="bg-gradient-to-r from-teal-500 to-coral-500 p-6">
           <div className="flex items-center justify-between">
@@ -294,5 +302,13 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, sele
         </form>
       </div>
     </div>
+
+      <WifiConnectedModal
+        isOpen={showSuccessModal}
+        onClose={handleCloseSuccessModal}
+        nodeLocation={selectedNode?.location}
+        duration={parseInt(duration)}
+      />
+    </>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Clock, DollarSign, MapPin, ArrowLeft } from 'lucide-react';
 import { useWeb3V2 } from '../contexts/Web3ContextV2';
 import { WifiNode } from '../lib/supabase';
+import WifiConnectedModal from './WifiConnectedModal';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export default function PaymentModal({ isOpen, onClose, onPaymentSuccess, select
   const [duration, setDuration] = useState('3600');
   const [amount, setAmount] = useState('0.001');
   const [error, setError] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     if (selectedNode) {
@@ -34,12 +36,17 @@ export default function PaymentModal({ isOpen, onClose, onPaymentSuccess, select
       await makePaymentETH(parseInt(nodeId), parseInt(duration), amount);
       onPaymentSuccess();
       onClose();
+      setShowSuccessModal(true);
       setNodeId('1');
       setDuration('3600');
       setAmount('0.001');
     } catch (err: any) {
       setError(err.message || 'Payment failed. Please try again.');
     }
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
   };
 
   const durationOptions = [
@@ -50,8 +57,9 @@ export default function PaymentModal({ isOpen, onClose, onPaymentSuccess, select
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full border-4 border-gray-100 relative overflow-hidden">
+    <>
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full border-4 border-gray-100 relative overflow-hidden">
         <div className="bg-gradient-to-r from-teal-500 to-coral-500 p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-extrabold text-white">Make Payment</h2>
@@ -183,5 +191,13 @@ export default function PaymentModal({ isOpen, onClose, onPaymentSuccess, select
         </form>
       </div>
     </div>
+
+      <WifiConnectedModal
+        isOpen={showSuccessModal}
+        onClose={handleCloseSuccessModal}
+        nodeLocation={selectedNode?.location}
+        duration={parseInt(duration)}
+      />
+    </>
   );
 }
