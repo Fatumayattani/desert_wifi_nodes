@@ -44,52 +44,6 @@ Deslink is a web application that enables communities to establish and manage th
 - **Web3 Library**: Ethers.js v6
 - **Wallet**: MetaMask / Web3 Compatible
 
-## Project Architecture
-
-### Application Structure
-
-```
-deslink/
-├── contracts/
-│   ├── DesertWifiNodes.sol          # V1 smart contract
-│   └── DesertWifiNodesV2.sol        # V2 smart contract (current)
-├── src/
-│   ├── components/
-│   │   ├── Navbar.tsx               # Navigation with wallet connect
-│   │   ├── Hero.tsx                 # Landing page hero section
-│   │   ├── HowItWorks.tsx           # 3-step process explanation
-│   │   ├── CommunityOwnership.tsx   # Feature showcase
-│   │   ├── Dashboard.tsx            # User dashboard with node browser
-│   │   ├── NodeBrowser.tsx          # Browse and filter WiFi nodes
-│   │   ├── PaymentModal.tsx         # ETH payment interface
-│   │   ├── PaymentModalV2.tsx       # Multi-currency payment interface
-│   │   ├── RegisterNodeModal.tsx    # Node registration interface
-│   │   ├── GovernancePanel.tsx      # Community governance voting
-│   │   ├── ConnectionConfirmation.tsx # Wallet connection modal
-│   │   ├── WifiConnectedModal.tsx   # Payment success confirmation
-│   │   ├── WalletAddressDisplay.tsx # Wallet address component
-│   │   └── Footer.tsx               # Site footer
-│   ├── contexts/
-│   │   ├── Web3Context.tsx          # V1 Web3 provider
-│   │   └── Web3ContextV2.tsx        # V2 Web3 provider (current)
-│   ├── contracts/
-│   │   ├── desertWifiNodesConfig.ts # V1 contract ABI
-│   │   └── desertWifiNodesV2Config.ts # V2 contract ABI (current)
-│   ├── services/
-│   │   └── nodeService.ts           # Supabase node queries
-│   ├── lib/
-│   │   └── supabase.ts              # Supabase client configuration
-│   ├── App.tsx                      # Main app component & routing
-│   ├── main.tsx                     # Application entry point
-│   └── index.css                    # Global styles & Tailwind
-├── supabase/
-│   └── migrations/
-│       └── 20251029065105_create_wifi_nodes_table.sql
-├── public/                          # Static assets
-├── DEPLOYMENT.md                    # Smart contract deployment guide
-├── V2_FEATURES.md                   # V2 feature documentation
-└── dist/                            # Production build
-```
 
 ### Component Architecture
 
@@ -156,43 +110,6 @@ Landing Page → Connect Wallet → MetaMask Authorization
                               Connected to WiFi!
 ```
 
-### Centralized Payment System
-
-**Important**: All payments in the application are routed to Node #1 on the blockchain, regardless of which node is visually selected in the UI. This creates a centralized payment hub while maintaining the user experience of browsing multiple nodes.
-
-- Users browse and select from multiple nodes with different prices and reputations
-- Node information (location, pricing, reputation) is displayed for user decision-making
-- When payment is made, the smart contract always receives nodeId = 1
-- Node #1 accumulates all earnings from the network
-- This approach simplifies network management and fund distribution
-
-## Database Schema (Supabase)
-
-### wifi_nodes Table
-
-```sql
-CREATE TABLE wifi_nodes (
-  id BIGSERIAL PRIMARY KEY,
-  node_id INTEGER UNIQUE NOT NULL,
-  owner_address TEXT NOT NULL,
-  location TEXT NOT NULL,
-  price_per_hour_eth DECIMAL(18,8) NOT NULL,
-  price_per_hour_usd DECIMAL(10,2) NOT NULL,
-  total_earnings_eth DECIMAL(18,8) DEFAULT 0,
-  total_earnings_usdc DECIMAL(18,6) DEFAULT 0,
-  total_earnings_usdt DECIMAL(18,6) DEFAULT 0,
-  is_active BOOLEAN DEFAULT true,
-  registered_at TIMESTAMPTZ DEFAULT now(),
-  reputation_score INTEGER DEFAULT 50,
-  total_connections INTEGER DEFAULT 0,
-  upvotes INTEGER DEFAULT 0,
-  downvotes INTEGER DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now()
-);
-```
-
-Row Level Security (RLS) is enabled on all tables with appropriate policies for authenticated users.
 
 ## Payment Flow (Scroll Network)
 
@@ -235,34 +152,6 @@ Row Level Security (RLS) is enabled on all tables with appropriate policies for 
 └──────────────────┘
 ```
 
-## Smart Contract V2 Functions
-
-### For Users
-- `makePaymentETH(nodeId, duration)` - Pay with ETH (routes to Node #1)
-- `makePaymentStablecoin(nodeId, duration, amount, paymentType)` - Pay with USDC/USDT (routes to Node #1)
-- `rateNode(nodeId, isPositive)` - Rate a node's service quality
-- `getUserPayments(address)` - View your payment history
-- `getUserReputation(address)` - Check your reputation score
-
-### For Node Operators
-- `registerNode(location, pricePerHourETH, pricePerHourUSD)` - Register a new WiFi node
-- `updateNodePrice(nodeId, newPriceETH, newPriceUSD)` - Update hourly pricing
-- `withdrawEarnings(nodeId)` - Withdraw accumulated earnings (ETH/USDC/USDT)
-- `deactivateNode(nodeId)` / `reactivateNode(nodeId)` - Manage node status
-
-### Governance Functions
-- `createProposal(description, proposalType, targetNodeId, newValue)` - Create governance proposal
-- `voteOnProposal(proposalId, support)` - Vote on active proposals
-- `executeProposal(proposalId)` - Execute approved proposals
-- `canParticipateInGovernance(address)` - Check governance eligibility
-
-### View Functions
-- `getNode(nodeId)` - Get detailed node information
-- `getUserNodes(address)` - List nodes owned by an address
-- `getNodePayments(nodeId)` - View payments received by a node
-- `getNetworkStats()` - Get network-wide statistics
-- `getProposalDetails(proposalId)` - Get proposal information
-
 ## Getting Started
 
 ### Prerequisites
@@ -277,7 +166,7 @@ Row Level Security (RLS) is enabled on all tables with appropriate policies for 
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/Fatumayattani/deslink.git
 cd deslink
 ```
 
@@ -363,104 +252,6 @@ Users can find the perfect node using:
 - **Active Only**: Show only operational nodes
 - **Minimum Reputation**: Filter by quality score (50+, 70+, 85+)
 
-### Sorting Options
-- Highest Reputation
-- Lowest/Highest Price (ETH)
-- Lowest/Highest Price (USD)
-- Most Popular (by connections)
-- Newest First
-
-## Reputation System
-
-### For Users
-- Earn reputation by using the network
-- Rate nodes after connecting
-- Higher reputation enables governance participation
-
-### For Node Operators
-- Start with 50 reputation
-- Gain +10 for positive ratings
-- Lose -5 for negative ratings
-- Reputation affects node visibility and trust
-
-## Governance
-
-### Proposal Types
-- **Update Treasury Fee**: Adjust network fee percentage
-- **Remove Node**: Remove problematic nodes from network
-- **Update Min Reputation**: Change governance participation threshold
-- **Treasury Withdrawal**: Approve fund withdrawals
-
-### Voting Process
-1. Eligible members create proposals
-2. Community votes (reputation-weighted)
-3. 7-day voting period
-4. Approved proposals are executed
-5. Results recorded on-chain
-
-### Eligibility
-- Reputation score ≥ 100, OR
-- Manual governance member designation
-
-## Security
-
-- **Web3 Security**: Standard Web3 provider integration
-- **No Private Keys**: Never stored or transmitted
-- **Row Level Security**: Enabled on all Supabase tables
-- **Smart Contract Audited**: OpenZeppelin contracts used
-- **HTTPS Required**: For production deployments
-- **Centralized Payments**: All funds route to secure Node #1
-
-## Network Architecture
-
-### Centralized Payment Hub Model
-
-```
-        ☀️ Solar Panels
-           │
-      ┌────┴────────────────────────┐
-      │     Node #1 (Payment Hub)   │
-      │  ┌──────────────────────┐   │
-      │  │ Receives All Payments│   │
-      │  │ Manages Distribution │   │
-      │  └──────────────────────┘   │
-      └────┬────────────────────────┘
-           │
-     ┌─────┼──────────┐
-     │     │          │
-┌────▼──┐ ┌▼────┐ ┌──▼────┐
-│Node 2 │ │Node 3│ │Node 4 │
-│Display│ │Display│ │Display│
-└───────┘ └──────┘ └───────┘
-    │        │         │
-    └────────┼─────────┘
-             │
-        ┌────▼────┐
-        │  Users  │
-        │  Browse │
-        │  & Pay  │
-        └─────────┘
-```
-
-Users browse multiple nodes but all payments consolidate to Node #1 for simplified network management and fund distribution.
-
-## Future Enhancements
-
-### Technical Improvements
-- Multi-network support (Polygon, Arbitrum, Optimism)
-- Advanced analytics dashboard with charts
-- Mobile app (React Native)
-- Geographic node mapping
-- Real-time bandwidth monitoring
-- Automatic node discovery
-
-### Feature Additions
-- Subscription-based payment plans
-- Referral rewards program
-- NFT-based node ownership
-- Social features (chat, forums)
-- Multi-language support
-- Advanced governance mechanisms
 
 ## Contributing
 
@@ -487,11 +278,11 @@ For issues, questions, or contributions:
 
 - Built with React and Vite
 - Powered by Scroll Network for affordable L2 transactions
+- Web3 Developer Clubs
 - Supabase for real-time database
 - Ethers.js for Web3 integration
 - OpenZeppelin for secure smart contracts
 - Inspired by community-driven connectivity initiatives
-- Solar energy advocacy for sustainable technology
 
 ---
 
