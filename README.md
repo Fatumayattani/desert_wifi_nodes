@@ -2,7 +2,6 @@
 
 A decentralized, community-owned WiFi network platform powered by solar energy and Scroll blockchain payments. This project aims to bridge the digital gap by providing affordable, reliable internet access to underserved communities.
 
-![Deslink](public/desertw.png)
 
 ## Overview
 
