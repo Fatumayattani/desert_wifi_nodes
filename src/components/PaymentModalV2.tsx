@@ -25,8 +25,21 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess }: Pa
     setError('');
 
     try {
+      const parsedNodeId = parseInt(nodeId);
+      const parsedDuration = parseInt(duration);
+
+      if (isNaN(parsedNodeId) || parsedNodeId < 1) {
+        setError('Please enter a valid node ID (must be 1 or greater)');
+        return;
+      }
+
+      if (isNaN(parsedDuration) || parsedDuration < 1) {
+        setError('Please enter a valid duration');
+        return;
+      }
+
       if (paymentMethod === 'ETH') {
-        await makePaymentETH(parseInt(nodeId), parseInt(duration), amount);
+        await makePaymentETH(parsedNodeId, parsedDuration, amount);
       } else {
         if (step === 'payment') {
           setStep('approve');
@@ -36,7 +49,7 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess }: Pa
         }
 
         const paymentType = paymentMethod === 'USDC' ? PaymentType.USDC : PaymentType.USDT;
-        await makePaymentStablecoin(parseInt(nodeId), parseInt(duration), amount, paymentType);
+        await makePaymentStablecoin(parsedNodeId, parsedDuration, amount, paymentType);
       }
 
       onPaymentSuccess();
@@ -46,7 +59,24 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess }: Pa
       setAmount('0.001');
       setStep('payment');
     } catch (err: any) {
-      setError(err.message || 'Payment failed. Please try again.');
+      console.error('Payment error:', err);
+      let errorMessage = 'Payment failed. Please try again.';
+
+      if (err.message) {
+        if (err.message.includes('Invalid node ID')) {
+          errorMessage = 'Node ID does not exist. Please check the node ID and try again.';
+        } else if (err.message.includes('Node is not active')) {
+          errorMessage = 'This node is not currently active.';
+        } else if (err.message.includes('Insufficient payment')) {
+          errorMessage = 'Payment amount is too low for the requested duration.';
+        } else if (err.message.includes('user rejected')) {
+          errorMessage = 'Transaction was rejected by user.';
+        } else {
+          errorMessage = err.message;
+        }
+      }
+
+      setError(errorMessage);
       setStep('payment');
     }
   };

@@ -71,6 +71,7 @@ interface Web3ContextV2Type {
   makePaymentETH: (nodeId: number, duration: number, amount: string) => Promise<void>;
   makePaymentStablecoin: (nodeId: number, duration: number, amount: string, paymentType: PaymentType) => Promise<void>;
   approveStablecoin: (tokenAddress: string, amount: string) => Promise<void>;
+  registerNode: (location: string, pricePerHourETH: string, pricePerHourUSD: string) => Promise<void>;
   getUserPayments: () => Promise<Payment[]>;
   getNetworkStats: () => Promise<NetworkStats | null>;
   getUserReputation: (address: string) => Promise<bigint>;
@@ -439,6 +440,29 @@ export function Web3ProviderV2({ children }: { children: ReactNode }) {
     }
   };
 
+  const registerNode = async (location: string, pricePerHourETH: string, pricePerHourUSD: string) => {
+    if (!contract) {
+      throw new Error('Contract not initialized');
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const priceETHInWei = parseEther(pricePerHourETH);
+      const priceUSDInUnits = parseUnits(pricePerHourUSD, 6);
+
+      const tx = await contract.registerNode(location, priceETHInWei, priceUSDInUnits);
+      await tx.wait();
+    } catch (err: any) {
+      console.error('Error registering node:', err);
+      setError(err.message || 'Failed to register node');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts: string[]) => {
@@ -477,6 +501,7 @@ export function Web3ProviderV2({ children }: { children: ReactNode }) {
         makePaymentETH,
         makePaymentStablecoin,
         approveStablecoin,
+        registerNode,
         getUserPayments,
         getNetworkStats,
         getUserReputation,
