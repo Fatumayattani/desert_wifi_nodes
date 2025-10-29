@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, Wifi, DollarSign, ArrowLeft, Activity, TrendingUp, Search, RefreshCw, SlidersHorizontal, MapPin, Star, TrendingDown as TrendingDownIcon, History } from 'lucide-react';
+import { Users, Wifi, ArrowLeft, Search, RefreshCw, SlidersHorizontal, MapPin, Star, TrendingDown as TrendingDownIcon, History, TrendingUp } from 'lucide-react';
 import { formatEther } from 'ethers';
 import { useWeb3V2 } from '../contexts/Web3ContextV2';
 import Footer from './Footer';
@@ -148,52 +148,31 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
     setSelectedNode(null);
   };
 
-  const stats = [
-    {
-      icon: Wifi,
-      label: 'Active Nodes',
-      value: isLoading ? '...' : networkStats.activeNodes,
-      change: 'Network-wide',
-      color: 'text-teal-600',
-      bgColor: 'bg-teal-50',
-    },
-    {
-      icon: Users,
-      label: 'Connected Users',
-      value: isLoading ? '...' : networkStats.totalUsers,
-      change: 'Network-wide',
-      color: 'text-coral-600',
-      bgColor: 'bg-coral-50',
-    },
-    {
-      icon: DollarSign,
-      label: 'Total Volume',
-      value: isLoading ? '...' : networkStats.totalVolume,
-      change: 'Network-wide',
-      color: 'text-sunny-600',
-      bgColor: 'bg-sunny-50',
-    },
-    {
-      icon: Activity,
-      label: 'Network Uptime',
-      value: networkStats.uptime,
-      change: 'Last 30 days',
-      color: 'text-teal-600',
-      bgColor: 'bg-teal-50',
-    },
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white">
-      <div className="bg-white/90 backdrop-blur-lg border-b-4 border-teal-200 sticky top-0 z-10 shadow-lg">
+    <div className="min-h-screen bg-gradient-to-br from-teal-400 via-teal-500 to-coral-500 relative overflow-hidden">
+      <div className="absolute inset-0 opacity-10">
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="dashboard-waves" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
+              <path d="M0 100 Q 50 80, 100 100 T 200 100" fill="none" stroke="white" strokeWidth="2" opacity="0.3"/>
+              <path d="M0 120 Q 50 100, 100 120 T 200 120" fill="none" stroke="white" strokeWidth="2" opacity="0.2"/>
+              <circle cx="50" cy="50" r="30" fill="white" opacity="0.1"/>
+              <circle cx="150" cy="150" r="40" fill="white" opacity="0.1"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#dashboard-waves)"/>
+        </svg>
+      </div>
+
+      <div className="bg-white/10 backdrop-blur-md border-b-2 border-white/20 sticky top-0 z-10 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-center justify-between">
             <button
               onClick={onDisconnect}
-              className="flex items-center gap-2 text-gray-600 hover:text-teal-600 transition-colors font-semibold"
+              className="flex items-center gap-2 text-white hover:bg-white/20 px-4 py-2 rounded-full transition-all font-bold"
             >
               <ArrowLeft className="w-5 h-5" />
-              <span className="font-bold">Back to Home</span>
+              <span>Back to Home</span>
             </button>
 
             <div className="flex items-center gap-3">
@@ -208,56 +187,56 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-10">
-          <div className="inline-block bg-teal-100 text-teal-600 px-5 py-2 rounded-full text-sm font-bold mb-4">
-            YOUR DASHBOARD
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-2">Available WiFi Nodes</h1>
-          <p className="text-gray-600 text-lg">Connect to affordable, community-powered internet near you</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-3xl p-6 shadow-xl border-4 border-gray-100 hover:border-teal-200 hover:shadow-2xl transition-all transform hover:-translate-y-1"
-            >
-              <div className={`${stat.bgColor} ${stat.color} w-14 h-14 rounded-2xl flex items-center justify-center mb-4`}>
-                <stat.icon className="w-7 h-7" />
-              </div>
-              <div className="text-3xl font-extrabold text-gray-900 mb-1">{stat.value}</div>
-              <div className="text-sm text-gray-600 font-bold mb-2">{stat.label}</div>
-              <div className="flex items-center gap-1 text-xs text-teal-600 font-semibold bg-teal-50 px-2 py-1 rounded-full inline-flex">
-                <TrendingUp className="w-3 h-3" />
-                {stat.change}
-              </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative">
+        <div className="mb-10 text-center">
+          <div className="inline-flex items-center gap-3 mb-6">
+            <div className="relative">
+              <svg viewBox="0 0 120 120" className="w-20 h-20" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="40" r="30" fill="#fde047" opacity="0.9"/>
+                <ellipse cx="60" cy="75" rx="20" ry="30" fill="#fde047" opacity="0.9"/>
+                <circle cx="56" cy="35" r="4" fill="#1f2937"/>
+                <circle cx="64" cy="35" r="4" fill="#1f2937"/>
+                <path d="M 56 45 Q 60 48 64 45" stroke="#1f2937" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                <rect x="50" y="85" width="7" height="18" fill="#14b8a6" rx="2"/>
+                <rect x="63" y="85" width="7" height="18" fill="#14b8a6" rx="2"/>
+                <rect x="48" y="103" width="24" height="5" fill="#1f2937" rx="2"/>
+                <g transform="translate(50, 60)">
+                  <circle cx="10" cy="10" r="12" fill="#fb7185"/>
+                  <path d="M 5 10 L 8 13 L 15 6" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                </g>
+              </svg>
             </div>
-          ))}
+          </div>
+          <h1 className="text-5xl sm:text-6xl font-extrabold text-white mb-4 tracking-tight">
+            Find Your WiFi Node
+          </h1>
+          <p className="text-xl text-white/90 font-medium max-w-2xl mx-auto">
+            Browse available nodes and connect to affordable, community-powered internet
+          </p>
         </div>
 
         <div className="mb-8">
-          <div className="flex gap-2 border-b-2 border-gray-200">
+          <div className="flex gap-3 justify-center">
             <button
               onClick={() => setActiveTab('nodes')}
-              className={`px-6 py-3 font-bold transition-all ${
+              className={`px-8 py-4 font-bold transition-all rounded-2xl flex items-center gap-2 ${
                 activeTab === 'nodes'
-                  ? 'border-b-4 border-teal-500 text-teal-600 -mb-0.5'
-                  : 'text-gray-600 hover:text-teal-600'
+                  ? 'bg-white text-teal-600 shadow-2xl scale-105'
+                  : 'bg-white/20 text-white hover:bg-white/30'
               }`}
             >
-              <Wifi className="w-5 h-5 inline mr-2" />
+              <Wifi className="w-5 h-5" />
               WiFi Nodes
             </button>
             <button
               onClick={() => setActiveTab('history')}
-              className={`px-6 py-3 font-bold transition-all ${
+              className={`px-8 py-4 font-bold transition-all rounded-2xl flex items-center gap-2 ${
                 activeTab === 'history'
-                  ? 'border-b-4 border-teal-500 text-teal-600 -mb-0.5'
-                  : 'text-gray-600 hover:text-teal-600'
+                  ? 'bg-white text-teal-600 shadow-2xl scale-105'
+                  : 'bg-white/20 text-white hover:bg-white/30'
               }`}
             >
-              <History className="w-5 h-5 inline mr-2" />
+              <History className="w-5 h-5" />
               Payment History
             </button>
           </div>
@@ -265,7 +244,7 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
 
         {activeTab === 'nodes' ? (
           <>
-            <div className="bg-white rounded-3xl shadow-xl border-4 border-gray-100 p-6 mb-8">
+            <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-white/50 p-6 mb-8">
               <div className="flex gap-3 mb-4">
                 <div className="relative flex-1">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -279,8 +258,8 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
                 </div>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`px-4 py-3 rounded-xl font-bold transition-all flex items-center gap-2 ${
-                    showFilters ? 'bg-teal-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  className={`px-4 py-3 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg ${
+                    showFilters ? 'bg-gradient-to-r from-teal-500 to-coral-500 text-white' : 'bg-sunny-400 text-white hover:bg-sunny-500'
                   }`}
                 >
                   <SlidersHorizontal className="w-5 h-5" />
@@ -288,7 +267,7 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
                 </button>
                 <button
                   onClick={handleRefresh}
-                  className="px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-all"
+                  className="px-4 py-3 bg-coral-500 text-white rounded-xl font-bold hover:bg-coral-600 transition-all shadow-lg"
                 >
                   <RefreshCw className="w-5 h-5" />
                 </button>
@@ -367,8 +346,8 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
                 ))}
               </div>
             ) : nodes.length === 0 ? (
-              <div className="bg-white rounded-3xl shadow-xl border-4 border-gray-100 p-16 text-center">
-                <Wifi className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-white/50 p-16 text-center">
+                <Wifi className="w-16 h-16 text-teal-400 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-gray-900 mb-2">No Nodes Found</h3>
                 <p className="text-gray-600">Try adjusting your search or filters</p>
               </div>
@@ -377,7 +356,7 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
                 {nodes.map((node) => (
                   <div
                     key={node.id}
-                    className="bg-white rounded-2xl p-6 shadow-lg border-2 border-gray-100 hover:border-teal-300 hover:shadow-xl transition-all relative"
+                    className="bg-white/95 backdrop-blur-md rounded-2xl p-6 shadow-2xl border-4 border-white/50 hover:border-sunny-300 hover:shadow-2xl hover:scale-105 transition-all relative"
                   >
                     <div className="absolute top-4 right-4">
                       {node.is_active ? (
@@ -444,7 +423,7 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
 
                     <button
                       onClick={() => handleSelectNode(node)}
-                      className="w-full bg-gradient-to-r from-teal-500 to-coral-500 text-white px-4 py-3 rounded-xl font-bold hover:shadow-lg transition-all"
+                      className="w-full bg-gradient-to-r from-teal-500 to-coral-500 text-white px-4 py-3 rounded-xl font-bold hover:shadow-2xl hover:scale-105 transition-all"
                     >
                       Connect & Pay
                     </button>
@@ -454,10 +433,10 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
             )}
           </>
         ) : (
-          <div className="bg-white rounded-3xl shadow-xl border-4 border-gray-100 overflow-hidden">
-            <div className="p-8 bg-gradient-to-r from-teal-50 to-coral-50 border-b-4 border-gray-100">
-              <h2 className="text-3xl font-extrabold text-gray-900">Payment History</h2>
-              <p className="text-gray-600 mt-2 font-medium">Your recent transactions on the network</p>
+          <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-white/50 overflow-hidden">
+            <div className="p-8 bg-gradient-to-r from-sunny-400 to-coral-500 border-b-4 border-white/50">
+              <h2 className="text-3xl font-extrabold text-white">Payment History</h2>
+              <p className="text-white/90 mt-2 font-medium">Your recent transactions on the network</p>
             </div>
 
             <div className="overflow-x-auto">
@@ -493,7 +472,7 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
                     </tr>
                   ) : (
                     paymentHistory.map((payment) => (
-                      <tr key={payment.id} className="hover:bg-teal-50 transition-colors">
+                      <tr key={payment.id} className="hover:bg-sunny-50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                           {payment.date}
                         </td>
@@ -504,7 +483,7 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
                           {payment.amount}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-teal-100 text-teal-700 border-2 border-teal-200">
+                          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-teal-500 to-coral-500 text-white border-2 border-white shadow-lg">
                             {payment.status}
                           </span>
                         </td>
