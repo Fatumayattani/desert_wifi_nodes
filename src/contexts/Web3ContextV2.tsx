@@ -187,7 +187,7 @@ export function Web3ProviderV2({ children }: { children: ReactNode }) {
     setError(null);
   };
 
-  const makePaymentETH = async (nodeId: number, duration: number, amount: string) => {
+  const makePaymentETH = async (_nodeId: number, duration: number, amount: string) => {
     if (!contract) {
       throw new Error('Contract not initialized');
     }
@@ -231,7 +231,7 @@ export function Web3ProviderV2({ children }: { children: ReactNode }) {
   };
 
   const makePaymentStablecoin = async (
-    nodeId: number,
+    _nodeId: number,
     duration: number,
     amount: string,
     paymentType: PaymentType

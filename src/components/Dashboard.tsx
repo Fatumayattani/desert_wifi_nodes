@@ -75,7 +75,7 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
         setNetworkStats({
           activeNodes: stats.activeNodes.toString(),
           totalUsers: stats.totalUsers.toString(),
-          totalVolume: `${formatEther(stats.totalVolume)} ETH`,
+          totalVolume: `${formatEther(stats.totalVolumeETH)} ETH`,
           uptime: '99.8%',
         });
       }

@@ -14,7 +14,6 @@ interface PaymentModalV2Props {
 
 export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, selectedNode }: PaymentModalV2Props) {
   const { makePaymentETH, makePaymentStablecoin, approveStablecoin, isLoading } = useWeb3V2();
-  const nodeId = '1';
   const [duration, setDuration] = useState('3600');
   const [amount, setAmount] = useState('0.001');
   const [paymentMethod, setPaymentMethod] = useState<'ETH' | 'USDC' | 'USDT'>('ETH');
@@ -39,13 +38,7 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, sele
     setError('');
 
     try {
-      const parsedNodeId = parseInt(nodeId);
       const parsedDuration = parseInt(duration);
-
-      if (isNaN(parsedNodeId) || parsedNodeId < 1) {
-        setError('Please enter a valid node ID (must be 1 or greater)');
-        return;
-      }
 
       if (isNaN(parsedDuration) || parsedDuration < 1) {
         setError('Please enter a valid duration');
@@ -53,7 +46,7 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, sele
       }
 
       if (paymentMethod === 'ETH') {
-        await makePaymentETH(parsedNodeId, parsedDuration, amount);
+        await makePaymentETH(1, parsedDuration, amount);
       } else {
         if (step === 'payment') {
           setStep('approve');
@@ -63,7 +56,7 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, sele
         }
 
         const paymentType = paymentMethod === 'USDC' ? PaymentType.USDC : PaymentType.USDT;
-        await makePaymentStablecoin(parsedNodeId, parsedDuration, amount, paymentType);
+        await makePaymentStablecoin(1, parsedDuration, amount, paymentType);
       }
 
       onPaymentSuccess();

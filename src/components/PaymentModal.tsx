@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Clock, DollarSign, MapPin, ArrowLeft } from 'lucide-react';
+import { X, Clock, DollarSign, MapPin } from 'lucide-react';
 import { useWeb3V2 } from '../contexts/Web3ContextV2';
 import { WifiNode } from '../lib/supabase';
 import WifiConnectedModal from './WifiConnectedModal';
@@ -13,7 +13,6 @@ interface PaymentModalProps {
 
 export default function PaymentModal({ isOpen, onClose, onPaymentSuccess, selectedNode }: PaymentModalProps) {
   const { makePaymentETH, isLoading } = useWeb3V2();
-  const nodeId = '1';
   const [duration, setDuration] = useState('3600');
   const [amount, setAmount] = useState('0.001');
   const [error, setError] = useState('');
