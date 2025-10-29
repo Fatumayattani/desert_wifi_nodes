@@ -423,9 +423,9 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
 
                     <button
                       onClick={() => handleSelectNode(node)}
-                      className="w-full bg-gradient-to-r from-teal-500 to-coral-500 text-white px-4 py-3 rounded-xl font-bold hover:shadow-2xl hover:scale-105 transition-all"
+                      className="w-full bg-gradient-to-r from-teal-500 via-sunny-400 to-coral-500 text-white px-4 py-3 rounded-xl font-bold hover:shadow-2xl hover:scale-105 transition-all"
                     >
-                      Connect & Pay
+                      Pay & Connect
                     </button>
                   </div>
                 ))}

@@ -274,9 +274,9 @@ export default function NodeBrowser({ isOpen, onClose, onSelectNode }: NodeBrows
 
                   <button
                     onClick={() => onSelectNode(node)}
-                    className="w-full bg-gradient-to-r from-teal-500 to-coral-500 text-white px-4 py-3 rounded-xl font-bold hover:shadow-lg transition-all"
+                    className="w-full bg-gradient-to-r from-teal-500 via-sunny-400 to-coral-500 text-white px-4 py-3 rounded-xl font-bold hover:shadow-lg transition-all"
                   >
-                    Select & Pay
+                    Pay & Connect
                   </button>
                 </div>
               ))}
