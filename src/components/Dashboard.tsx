@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Users, Wifi, DollarSign, ArrowLeft, Activity, TrendingUp, Search, RefreshCw, SlidersHorizontal, MapPin, Star, TrendingDown as TrendingDownIcon, History } from 'lucide-react';
 import { formatEther } from 'ethers';
-import { useWeb3 } from '../contexts/Web3ContextV2';
+import { useWeb3V2 } from '../contexts/Web3ContextV2';
 import Footer from './Footer';
 import PaymentModal from './PaymentModal';
 import WalletAddressDisplay from './WalletAddressDisplay';
