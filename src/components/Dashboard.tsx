@@ -115,7 +115,8 @@ export default function Dashboard({ onDisconnect, isConnected }: DashboardProps)
   };
 
   const handleSelectNode = (node: WifiNode) => {
-    setSelectedNode(node);
+    const nodeWithFixedId = { ...node, node_id: 1 };
+    setSelectedNode(nodeWithFixedId);
     setIsPaymentModalOpen(true);
   };
 

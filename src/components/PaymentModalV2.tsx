@@ -14,7 +14,7 @@ interface PaymentModalV2Props {
 
 export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, selectedNode }: PaymentModalV2Props) {
   const { makePaymentETH, makePaymentStablecoin, approveStablecoin, isLoading } = useWeb3V2();
-  const [nodeId, setNodeId] = useState('1');
+  const nodeId = '1';
   const [duration, setDuration] = useState('3600');
   const [amount, setAmount] = useState('0.001');
   const [paymentMethod, setPaymentMethod] = useState<'ETH' | 'USDC' | 'USDT'>('ETH');
@@ -24,7 +24,6 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, sele
 
   useEffect(() => {
     if (selectedNode) {
-      setNodeId(selectedNode.node_id.toString());
       if (paymentMethod === 'ETH') {
         setAmount(selectedNode.price_per_hour_eth.toString());
       } else {
@@ -70,7 +69,6 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, sele
       onPaymentSuccess();
       onClose();
       setShowSuccessModal(true);
-      setNodeId('1');
       setDuration('3600');
       setAmount('0.001');
       setStep('payment');
@@ -212,20 +210,6 @@ export default function PaymentModalV2({ isOpen, onClose, onPaymentSuccess, sele
             </div>
           </div>
 
-          <div style={{ display: selectedNode ? 'none' : 'block' }}>
-            <label className="block text-sm font-bold text-gray-700 mb-2">
-              Node ID
-            </label>
-            <input
-              type="number"
-              min="1"
-              value={nodeId}
-              onChange={(e) => setNodeId(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all font-medium"
-              required
-            />
-            <p className="mt-1 text-xs text-gray-500">Enter the node ID you want to connect to</p>
-          </div>
 
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">
