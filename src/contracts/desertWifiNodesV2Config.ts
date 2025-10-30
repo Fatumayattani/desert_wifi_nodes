@@ -9,6 +9,11 @@ export const SCROLL_MAINNET_CHAIN_ID = 534352;
 export const SCROLL_SEPOLIA_RPC = 'https://sepolia-rpc.scroll.io';
 export const SCROLL_MAINNET_RPC = 'https://rpc.scroll.io';
 
+export const CURRENT_CHAIN_ID = parseInt(import.meta.env.VITE_NETWORK_CHAIN_ID || '534352');
+export const CURRENT_NETWORK_NAME = import.meta.env.VITE_NETWORK_NAME || 'Scroll Mainnet';
+export const CURRENT_RPC_URL = CURRENT_CHAIN_ID === SCROLL_MAINNET_CHAIN_ID ? SCROLL_MAINNET_RPC : SCROLL_SEPOLIA_RPC;
+export const CURRENT_BLOCK_EXPLORER = CURRENT_CHAIN_ID === SCROLL_MAINNET_CHAIN_ID ? 'https://scrollscan.com/' : 'https://sepolia.scrollscan.com/';
+
 export enum PaymentType {
   ETH = 0,
   USDC = 1,

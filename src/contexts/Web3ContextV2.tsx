@@ -3,7 +3,10 @@ import { BrowserProvider, Contract, parseEther, parseUnits } from 'ethers';
 import {
   DESERT_WIFI_NODES_V2_ABI,
   DESERT_WIFI_NODES_V2_ADDRESS,
-  SCROLL_SEPOLIA_CHAIN_ID,
+  CURRENT_CHAIN_ID,
+  CURRENT_NETWORK_NAME,
+  CURRENT_RPC_URL,
+  CURRENT_BLOCK_EXPLORER,
   PaymentType,
   ProposalType,
   ERC20_ABI,
@@ -102,7 +105,7 @@ export function Web3ProviderV2({ children }: { children: ReactNode }) {
   const switchToScrollNetwork = async () => {
     if (!window.ethereum) return;
 
-    const chainIdHex = `0x${SCROLL_SEPOLIA_CHAIN_ID.toString(16)}`;
+    const chainIdHex = `0x${CURRENT_CHAIN_ID.toString(16)}`;
 
     try {
       await window.ethereum.request({
@@ -117,14 +120,14 @@ export function Web3ProviderV2({ children }: { children: ReactNode }) {
             params: [
               {
                 chainId: chainIdHex,
-                chainName: 'Scroll Sepolia Testnet',
+                chainName: CURRENT_NETWORK_NAME,
                 nativeCurrency: {
                   name: 'ETH',
                   symbol: 'ETH',
                   decimals: 18,
                 },
-                rpcUrls: ['https://sepolia-rpc.scroll.io'],
-                blockExplorerUrls: ['https://sepolia.scrollscan.com/'],
+                rpcUrls: [CURRENT_RPC_URL],
+                blockExplorerUrls: [CURRENT_BLOCK_EXPLORER],
               },
             ],
           });
